@@ -11,7 +11,7 @@
 #
 #TextNode(TEXT, TEXT_TYPE, URL)
 #Where TEXT, TEXT_TYPE, and URL are the values of the text, text_type, and url properties, respectively.
-
+from htmlnode import LeafNode
 
 class TextNode:
     def __init__(self, text, text_type, url = None):
@@ -29,3 +29,19 @@ class TextNode:
     def __repr__(self) -> str:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
     
+def text_node_to_html_node(text_node):
+    text_type = text_node.text_type
+    text = text_node.text
+    if text_type == "text":
+        return LeafNode(None,text)
+    if text_type == "bold":
+        return LeafNode("b",text)
+    if text_type == "italic":
+        return LeafNode("i",text)
+    if text_type == "code":
+        return LeafNode("code",text)
+    if text_type == "link":
+        return LeafNode("a",text,{"href":text_node.url})
+    if text_type == "image":
+        return LeafNode("img",'',{"src":text_node.url,"alt":text})
+    raise ValueError(f"Invalid text type: {text_type}")
