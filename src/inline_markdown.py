@@ -6,6 +6,8 @@ from textnode import (
     text_type_bold,
     text_type_italic,
     text_type_code,
+    text_type_image,
+    text_type_link,
 )
 
 
@@ -29,6 +31,33 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 split_nodes.append(TextNode(split_text[x],text_type))
         outputNodes.extend(split_nodes)   
     return outputNodes
+
+def split_nodes_image(old_nodes):
+    outputNodes = []
+    for node in old_nodes:
+        if node.text_type != text_type_text:
+            outputNodes.append(node)
+            continue
+        running_text = node.text
+        split_images = extract_markdown_images(running_text)
+        if len(split_images) == 0:
+            outputNodes.append(node)
+            continue
+        
+        for image in split_images:
+            sections = running_text.split(f"![{image[0]}]({image[1]})", 1)
+            if len(sections) != 2:
+                raise ValueError("Invalid markdown, image section not closed")
+            if sections[0] != "":
+                outputNodes.append(TextNode(sections[0], text_type_text))
+            outputNodes.append(TextNode(image[0],text_type_image,image[1]))
+            running_text = sections[1]
+        if running_text != "":
+            outputNodes.append(TextNode(running_text, text_type_text))
+    return outputNodes          
+
+def split_nodes_link(old_nodes):
+    pass
 
 def extract_markdown_images(text):
     image_regex = r"!\[(.*?)\]\((.*?)\)"

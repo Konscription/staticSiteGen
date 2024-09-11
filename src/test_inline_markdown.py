@@ -49,7 +49,6 @@ class TestInlineMarkdown(unittest.TestCase):
         with self.assertRaises(ValueError):
             split_nodes_delimiter([node], "**", text_type_bold)
 
-
     def test_delim_bold_double(self):
         node = TextNode("This is text with a **bolded** word and **another**", text_type_text)
         new_nodes = split_nodes_delimiter([node], "**", text_type_bold)
@@ -108,6 +107,7 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,)
 
+
     def test_extract_markdown_images_finds_matches(self):
         text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
         result = extract_markdown_images(text)
@@ -157,6 +157,48 @@ class TestInlineMarkdown(unittest.TestCase):
         expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif")]
         self.assertEqual(result,expected)
 
+
+    def test_split_nodes_image_has_images(self):
+        node = TextNode(
+            "This is text with a image ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            text_type_text,)
+        result = split_nodes_image([node])
+        expected = [
+            TextNode("This is text with a image ", text_type_text),
+            TextNode("rick roll", text_type_image, "https://i.imgur.com/aKaOqIh.gif"),
+            TextNode(" and ", text_type_text),
+            TextNode("obi wan", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg"),]
+        self.assertListEqual(result,expected)
+
+    def test_split_nodes_image_has_no_images(self):
+        node = TextNode(
+            "This is text with a image [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            text_type_text,)
+        result = split_nodes_image([node])
+        expected = [TextNode(
+            "This is text with a image [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            text_type_text,)]
+        self.assertListEqual(result,expected)   
+        
+    def test_split_nodes_image_just_one_image(self):
+        node = TextNode("![rick roll](https://i.imgur.com/aKaOqIh.gif)",text_type_text)
+        result = split_nodes_image([node])
+        expected = [TextNode("rick roll", text_type_image, "https://i.imgur.com/aKaOqIh.gif")]
+        self.assertListEqual(result,expected)
+        
+    def test_split_nodes_image_trailing_text(self):
+        node = TextNode("![rick roll](https://i.imgur.com/aKaOqIh.gif) rolled",text_type_text)
+        result = split_nodes_image([node])
+        expected = [TextNode("rick roll", text_type_image, "https://i.imgur.com/aKaOqIh.gif"),
+                    TextNode(" rolled",text_type_text)]
+        self.assertListEqual(result,expected)
+    
+    def test_split_nodes_image_no_alt_text_image(self):
+        node = TextNode("![](https://i.imgur.com/aKaOqIh.gif)",text_type_text)
+        result = split_nodes_image([node])
+        expected = [TextNode("", text_type_image, "https://i.imgur.com/aKaOqIh.gif")]
+        self.assertListEqual(result,expected)
+    
 
 if __name__ == "__main__":
     unittest.main()
