@@ -22,6 +22,12 @@ class TestMarkdownUtil(unittest.TestCase):
         result = extract_markdown_images(text)
         expected = []
         self.assertEqual(result,expected)
-
+        
+    def text_extract_markdown_images_Mixed_links_and_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        result = extract_markdown_images(text)
+        expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif")]
+        self.assertEqual(result,expected)
+        
 if __name__ == "__main__":
     unittest.main()
