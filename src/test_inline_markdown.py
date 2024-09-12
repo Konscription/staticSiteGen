@@ -198,7 +198,49 @@ class TestInlineMarkdown(unittest.TestCase):
         result = split_nodes_image([node])
         expected = [TextNode("", text_type_image, "https://i.imgur.com/aKaOqIh.gif")]
         self.assertListEqual(result,expected)
+
+
+    def test_split_nodes_link_has_links(self):
+        node = TextNode(
+            "This is text with a link [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            text_type_text,)
+        result = split_nodes_link([node])
+        expected = [
+            TextNode("This is text with a link ", text_type_text),
+            TextNode("rick roll", text_type_link, "https://i.imgur.com/aKaOqIh.gif"),
+            TextNode(" and ", text_type_text),
+            TextNode("obi wan", text_type_link, "https://i.imgur.com/fJRm4Vk.jpeg"),]
+        self.assertListEqual(result,expected)
+
+    def test_split_nodes_link_has_no_links(self):
+        node = TextNode(
+            "This is text with a image ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            text_type_text,)
+        result = split_nodes_link([node])
+        expected = [TextNode(
+            "This is text with a image ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            text_type_text,)]
+        self.assertListEqual(result,expected)   
+        
+    def test_split_nodes_link_just_one_link(self):
+        node = TextNode("[rick roll](https://i.imgur.com/aKaOqIh.gif)",text_type_text)
+        result = split_nodes_link([node])
+        expected = [TextNode("rick roll", text_type_link, "https://i.imgur.com/aKaOqIh.gif")]
+        self.assertListEqual(result,expected)
+        
+    def test_split_nodes_link_trailing_text(self):
+        node = TextNode("[rick roll](https://i.imgur.com/aKaOqIh.gif) rolled",text_type_text)
+        result = split_nodes_link([node])
+        expected = [TextNode("rick roll", text_type_link, "https://i.imgur.com/aKaOqIh.gif"),
+                    TextNode(" rolled",text_type_text)]
+        self.assertListEqual(result,expected)
     
+    def test_split_nodes_link_no_alt_text_link(self):
+        node = TextNode("[](https://i.imgur.com/aKaOqIh.gif)",text_type_text)
+        result = split_nodes_link([node])
+        expected = [TextNode("", text_type_link, "https://i.imgur.com/aKaOqIh.gif")]
+        self.assertListEqual(result,expected)
+     
 
 if __name__ == "__main__":
     unittest.main()

@@ -57,7 +57,28 @@ def split_nodes_image(old_nodes):
     return outputNodes          
 
 def split_nodes_link(old_nodes):
-    pass
+    outputNodes = []
+    for node in old_nodes:
+        if node.text_type != text_type_text:
+            outputNodes.append(node)
+            continue
+        running_text = node.text
+        split_links = extract_markdown_links(running_text)
+        if len(split_links) == 0:
+            outputNodes.append(node)
+            continue
+        
+        for link in split_links:
+            sections = running_text.split(f"![{link[0]}]({link[1]})", 1)
+            if len(sections) != 2:
+                raise ValueError("Invalid markdown, link section not closed")
+            if sections[0] != "":
+                outputNodes.append(TextNode(sections[0], text_type_text))
+            outputNodes.append(TextNode(link[0],text_type_link,link[1]))
+            running_text = sections[1]
+        if running_text != "":
+            outputNodes.append(TextNode(running_text, text_type_text))
+    return outputNodes 
 
 def extract_markdown_images(text):
     image_regex = r"!\[(.*?)\]\((.*?)\)"
