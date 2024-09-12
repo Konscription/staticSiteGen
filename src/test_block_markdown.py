@@ -1,14 +1,6 @@
 import unittest
 from block_markdown import *
 
-from textnode import (
-    TextNode,
-    text_type_text,
-    text_type_bold,
-    text_type_italic,
-    text_type_code,
-)
-
 class TestBlockMarkdown(unittest.TestCase):
     
     def test_markdown_to_blocks(self):
@@ -42,5 +34,72 @@ last line"""
             "last line",
         ]
         self.assertListEqual(result,expected)
+        
+    
+    
+    def test_block_to_block_type_heading1(self):
+        block = "# heading"
+        result = block_to_block_type(block)
+        expected = block_type_heading
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_heading2(self):
+        block = "## heading"
+        result = block_to_block_type(block)
+        expected = block_type_heading
+        self.assertEqual(result,expected)
+
+    def test_block_to_block_type_heading3(self):
+        block = "### heading"
+        result = block_to_block_type(block)
+        expected = block_type_heading
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_heading4(self):
+        block = "#### heading"
+        result = block_to_block_type(block)
+        expected = block_type_heading
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_heading5(self):
+        block = "##### heading"
+        result = block_to_block_type(block)
+        expected = block_type_heading
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_heading6(self):
+        block = "###### heading"
+        result = block_to_block_type(block)
+        expected = block_type_heading
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_heading7_fail(self):
+        block = "####### heading"
+        result = block_to_block_type(block)
+        expected = block_type_paragraph
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_code(self):
+        block = """``` def main():
+        print("hello world")```"""
+        result = block_to_block_type(block)
+        expected = block_type_code
+        self.assertEqual(result,expected)
+
+    def test_block_to_block_type_quote(self):
+        block = """>I'm a dude
+>playing a dude
+>dressed as another dude."""
+        result = block_to_block_type(block)
+        expected = block_type_quote
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_quote_fail(self):
+        block = """>I'm a dude
+ playing a dude
+>dressed as another dude."""
+        result = block_to_block_type(block)
+        expected = block_type_paragraph
+        self.assertEqual(result,expected)
         
     

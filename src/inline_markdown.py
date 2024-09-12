@@ -22,7 +22,6 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         if len(split_text) % 2 == 0:
             raise ValueError(f"Invalid Markdown Syntax in {node.text}")
         for x in range(len(split_text)):
-            #print(f"\n{split_text[x]}")
             if split_text[x] == "":
                 continue
             if x % 2 == 0:
