@@ -241,6 +241,39 @@ class TestInlineMarkdown(unittest.TestCase):
         expected = [TextNode("", text_type_link, "https://i.imgur.com/aKaOqIh.gif")]
         self.assertListEqual(result,expected)
      
+    
+    def test_text_to_textnodes_parses_each_text_type(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        result = text_to_textnodes(text)
+        expected = [
+                    TextNode("This is ", text_type_text),
+                    TextNode("text", text_type_bold),
+                    TextNode(" with an ", text_type_text),
+                    TextNode("italic", text_type_italic),
+                    TextNode(" word and a ", text_type_text),
+                    TextNode("code block", text_type_code),
+                    TextNode(" and an ", text_type_text),
+                    TextNode("obi wan image", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                    TextNode(" and a ", text_type_text),
+                    TextNode("link", text_type_link, "https://boot.dev"),
+                ]
+        self.assertListEqual(result,expected)
 
+    def test_text_to_textnodes_empty_text(self):
+        text = ""
+        result =text_to_textnodes(text)
+        expected = [TextNode("", text_type_text)]
+        self.assertListEqual(result,expected)        
+
+    def test_text_to_textnodes_multiple_same_type(self):
+        text = "the **farmer** is bad at **running**"
+        result =text_to_textnodes(text)
+        expected = [TextNode("the ", text_type_text),
+                    TextNode("farmer",text_type_bold),
+                    TextNode(" is bad at ",text_type_text),
+                    TextNode("running",text_type_bold)]
+        self.assertListEqual(result,expected)  
+        
+                
 if __name__ == "__main__":
     unittest.main()

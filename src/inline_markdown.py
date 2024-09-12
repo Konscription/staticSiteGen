@@ -87,3 +87,19 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
     links_regex = r"(?<!!)\[(.*?)\]\((.*?)\)"
     return re.findall(links_regex, text)
+
+def text_to_textnodes(text):    
+    output_list = [TextNode(text,text_type_text)]
+    if "**" in text:#bold in text
+        output_list = split_nodes_delimiter(output_list,'**',text_type_bold)
+    if "*" in text:#italic in text
+        output_list = split_nodes_delimiter(output_list,'*',text_type_italic)
+    if "`" in text:#code in text
+        output_list = split_nodes_delimiter(output_list,'`',text_type_code)
+    if "![" in text:#image in text
+        output_list = split_nodes_image(output_list)
+    if "[" in text:#link in text
+        output_list = split_nodes_link(output_list)
+    return output_list
+    
+        
