@@ -21,8 +21,7 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
 * This is another list item""",
         ]
         self.assertListEqual(result,expected)
-        
-        
+              
     def test_markdown_to_blocks_extra_lines(self):
         markdown = """ first line
 
@@ -34,8 +33,7 @@ last line"""
             "last line",
         ]
         self.assertListEqual(result,expected)
-        
-    
+          
     
     def test_block_to_block_type_heading1(self):
         block = "# heading"
@@ -102,4 +100,62 @@ last line"""
         expected = block_type_paragraph
         self.assertEqual(result,expected)
         
+    def test_block_to_block_type_ordered_list(self):
+        block = """1. first
+2. second
+3. third
+4. forth
+5. fith"""
+        result = block_to_block_type(block)
+        expected = block_type_ordered_list
+        self.assertEqual(result,expected)        
     
+    def test_block_to_block_type_ordered_list_fail(self):
+        block = """1. first
+2. second
+ third
+4. forth
+5. fith"""
+        result = block_to_block_type(block)
+        expected = block_type_paragraph
+        self.assertEqual(result,expected)        
+     
+    def test_block_to_block_type_unordered_list_asterisk(self):
+        block = """* eggs
+* bacon
+* flour
+* grapes
+* milk"""
+        result= block_to_block_type(block)
+        expected = block_type_unordered_list
+        self.assertEqual(result,expected)
+        
+    def test_block_to_block_type_unordered_list_dash(self):
+        block = """- eggs
+- bacon
+- flour
+- grapes
+- milk"""
+        result= block_to_block_type(block)
+        expected = block_type_unordered_list
+        self.assertEqual(result,expected)
+ 
+    def test_block_to_block_type_unordered_list_mixed(self):
+        block = """* eggs
+- bacon
+* flour
+- grapes
+* milk"""
+        result= block_to_block_type(block)
+        expected = block_type_unordered_list
+        self.assertEqual(result,expected)
+ 
+    def test_block_to_block_type_unordered_list_fail(self):
+        block = """eggs
+- bacon
+* flour
+- grapes
+* milk"""
+        result= block_to_block_type(block)
+        expected = block_type_paragraph
+        self.assertEqual(result,expected)
