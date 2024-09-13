@@ -1,5 +1,6 @@
 import re
 
+from typing import List
 from textnode import (
     TextNode,
     text_type_text,
@@ -11,7 +12,23 @@ from textnode import (
 )
 
 
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
+def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: str) -> List[TextNode]:
+    """takes a list of "old nodes", a delimiter, and a text type. 
+    It should return a new list of nodes, 
+    where any "text" type nodes in the input list are (potentially) split 
+    into multiple nodes based on the syntax.
+    
+    Args:
+        old_nodes (List[TextNode]): a list of TextNode's to parse through and split if necessary
+        delimiter (str): a string value delimiter to split a node's text.
+        text_type (str): a string representing the type of text (text,bold,italic,code,image,link)
+
+    Raises:
+        ValueError: raises an error if there are not a pair of delimiters
+
+    Returns:
+        List[TextNode]: returns a list of TextNode's that have been split by the given delimiter and type
+    """    
     outputNodes = []
     for node in old_nodes:
         if node.text_type != text_type_text:
@@ -31,7 +48,18 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         outputNodes.extend(split_nodes)   
     return outputNodes
 
-def split_nodes_image(old_nodes):
+def split_nodes_image(old_nodes: List[TextNode]) -> List[TextNode]:
+    """given a list of TextNodes split out any images into their own TextNode.
+
+    Args:
+        old_nodes (List[TextNode]): a list of TextNodes to process
+
+    Raises:
+        ValueError: raise an error if the image syntax is wrong in the given TextNodes
+
+    Returns:
+        List[TextNode]: return a list of TextNodes with any newly created image textnode's included.
+    """    
     outputNodes = []
     for node in old_nodes:
         if node.text_type != text_type_text:
@@ -55,7 +83,18 @@ def split_nodes_image(old_nodes):
             outputNodes.append(TextNode(running_text, text_type_text))
     return outputNodes          
 
-def split_nodes_link(old_nodes):
+def split_nodes_link(old_nodes: List[TextNode]) -> List[TextNode]:
+    """given a list of TextNodes split out any links into their own TextNode.
+
+    Args:
+        old_nodes (List[TextNode]): a list of TextNodes to process
+
+    Raises:
+        ValueError: raise an error if the link syntax is wrong in the given TextNodes
+
+    Returns:
+        List[TextNode]: return a list of TextNodes with any newly created link textnode's included.
+    """    
     outputNodes = []
     for node in old_nodes:
         if node.text_type != text_type_text:
@@ -79,15 +118,40 @@ def split_nodes_link(old_nodes):
             outputNodes.append(TextNode(running_text, text_type_text))
     return outputNodes 
 
-def extract_markdown_images(text):
+def extract_markdown_images(text: str) -> List[str]:
+    """regex the image markdown syntax from given text
+
+    Args:
+        text (str): input text for regex processing
+
+    Returns:
+        List[str]: return list of all matching image markdown strings
+    """    
     image_regex = r"!\[(.*?)\]\((.*?)\)"
     return re.findall(image_regex, text)
 
-def extract_markdown_links(text):
+def extract_markdown_links(text: str) -> List[str]:
+    """regex the link markdown syntax from given text
+
+    Args:
+        text (str): input text for regex processing
+
+    Returns:
+        List[str]: return list of all matching link markdown strings
+    """ 
     links_regex = r"(?<!!)\[(.*?)\]\((.*?)\)"
     return re.findall(links_regex, text)
 
-def text_to_textnodes(text):    
+def text_to_textnodes(text: str) -> List[TextNode]:
+    """a function that converts a raw string of markdown text 
+    into a list of TextNode objects.
+
+    Args:
+        text (str): Markdown Text input
+
+    Returns:
+        List[TextNode]: returns a list of TextNodes parsed from the given markdown text
+    """    
     output_list = [TextNode(text,text_type_text)]
     if "**" in text:#bold in text
         output_list = split_nodes_delimiter(output_list,'**',text_type_bold)
