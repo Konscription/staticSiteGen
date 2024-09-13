@@ -107,7 +107,7 @@ last line"""
 4. forth
 5. fith"""
         result = block_to_block_type(block)
-        expected = block_type_ordered_list
+        expected = block_type_olist
         self.assertEqual(result,expected)        
     
     def test_block_to_block_type_ordered_list_fail(self):
@@ -127,7 +127,7 @@ last line"""
 * grapes
 * milk"""
         result= block_to_block_type(block)
-        expected = block_type_unordered_list
+        expected = block_type_ulist
         self.assertEqual(result,expected)
         
     def test_block_to_block_type_unordered_list_dash(self):
@@ -137,7 +137,7 @@ last line"""
 - grapes
 - milk"""
         result= block_to_block_type(block)
-        expected = block_type_unordered_list
+        expected = block_type_ulist
         self.assertEqual(result,expected)
  
     def test_block_to_block_type_unordered_list_mixed(self):
@@ -147,7 +147,7 @@ last line"""
 - grapes
 * milk"""
         result= block_to_block_type(block)
-        expected = block_type_unordered_list
+        expected = block_type_ulist
         self.assertEqual(result,expected)
  
     def test_block_to_block_type_unordered_list_fail(self):

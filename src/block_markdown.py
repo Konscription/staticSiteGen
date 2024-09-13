@@ -1,12 +1,11 @@
-import re
 from typing import List
 
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
 block_type_code = "code"
 block_type_quote = "quote"
-block_type_unordered_list = "unordered_list"
-block_type_ordered_list = "ordered_list"
+block_type_ulist = "unordered_list"
+block_type_olist = "ordered_list"
 
 
 def markdown_to_blocks(markdown: str) -> List[str]:
@@ -50,36 +49,33 @@ def block_to_block_type(block: str) -> str:
     if is_quote(block):
         return block_type_quote
     if is_ordered_list(block):
-        return block_type_ordered_list
+        return block_type_olist
     if is_unordered_list(block):
-        return block_type_unordered_list
+        return block_type_ulist
     return block_type_paragraph
 
 def is_heading(block: str) -> bool:
-    if block[0:2] == '# ':
-        return True
-    if block[0:3] == '## ':
-        return True
-    if block[0:4] == '### ':
-        return True
-    if block[0:5] == '#### ':
-        return True
-    if block[0:6] == '##### ':
-        return True
-    if block[0:7] == '###### ':
+    if (
+        block.startswith('# ') or
+        block.startswith('## ') or
+        block.startswith('### ') or
+        block.startswith('#### ') or
+        block.startswith('##### ') or
+        block.startswith('###### ')
+        ):
         return True
     return False
 
 def is_code(block: str) -> bool:
-    if block[0:3] == "```":
-        if block[-3:] == "```":
+    if block.startswith("```"):
+        if block.endswith("```"):
             return True
     return False
 
 def is_quote(block: str) -> bool:
     lines = block.split("\n")
     for line in lines:
-        if line[0:1] != ">":
+        if not line.startswith(">"):
             return False
     return True
 
@@ -96,13 +92,9 @@ def is_ordered_list(block: str) -> bool:
             otherwise returns false
     """
     lines = block.split("\n")
-    pattern = r"^\b(\d*)\. "
     order_start = 1
     for line in lines:
-        order_value = re.findall(pattern,line)
-        if len(order_value) <= 0:
-            return False
-        if int(order_value[0]) != order_start:
+        if not line.startswith(f"{order_start}. "):
             return False
         order_start += 1
     return True
@@ -120,7 +112,7 @@ def is_unordered_list(block: str) -> bool:
     """
     lines = block.split("\n")
     for line in lines:
-        if line[0:2] != "* " and line[0:2] != "- ":
+        if not line.startswith("* ") and not line.startswith("- "):
             return False
     return True
 
