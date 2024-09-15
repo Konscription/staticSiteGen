@@ -1,4 +1,4 @@
-from typing import (Dict,List)
+from typing import (Type,Dict,List)
 
 
 class HTMLNode:
@@ -46,6 +46,23 @@ class HTMLNode:
     def __repr__(self) -> str:
         return f"HTMLNode({self.tag},{self.value}, children: {self.children},{self.props})"
     
+    def __eq__(self, other: Type['HTMLNode']) -> bool:
+        """compare two HTML nodes, and evaluate if they are equal.
+        
+        Args:
+            other (HTMLNode): other HTMLNode object to compare
+
+        Returns:
+            bool: true if objects values are the same, false otherwise
+        """        
+        if not isinstance(other, HTMLNode):
+            return False
+        return (
+            self.tag == other.tag 
+            and self.value == other.value
+            and self.children == other.children
+            and self.props == other.props
+        )
 
 class LeafNode(HTMLNode):
     """a type of HTMLNode that represents a single HTML tag with no children. 
@@ -131,4 +148,3 @@ class ParentNode(HTMLNode):
         return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
 
 
-    

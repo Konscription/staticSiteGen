@@ -1,4 +1,6 @@
-from typing import List
+import re
+from typing import List,Tuple
+from htmlnode import HTMLNode
 
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
@@ -116,4 +118,53 @@ def is_unordered_list(block: str) -> bool:
             return False
     return True
 
+def markdown_to_html_node(markdown: str) -> HTMLNode:
+    #split markdown into blocks
+    #loop over each block
+    #   determine the type of block
+    #   based on the type of block, create a new HTMLNode with proper data
+    #   assign the proper child HTMLNode objects to the block node. 
+    #       created a shared text_to_children(text) function that works for all block 
+    #           types takes a string of text and returns a list of HTMLNodes that 
+    #           represent the inline markdown using previously created functions
+    #make all the block nodes Children under a single parent HTML node (which should 
+    #   just be a div) and return it.
+    blocks = markdown_to_blocks(markdown)
+    
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        
+        
+def block_to_htmlnode(block: str, block_type: str) -> HTMLNode:
+    if block_type == block_type_paragraph:
+        return HTMLNode("p",block)
+    if block_type == block_type_heading:
+        tag, value = get_heading_info(block)
+        return HTMLNode(tag,value)
+    if block_type == block_type_quote:
+        tag, value = get_quote_info(block)
+        return HTMLNode(tag,value)
+    if block_type == block_type_code:
+        pass
+    if block_type == block_type_ulist:
+        pass
+    if block_type == block_type_olist:
+        pass
+    
+def get_heading_info(block: str) -> Tuple[str,str]:
+    regex_pattern = r"^#{1,6} "
+    matches = re.findall(regex_pattern,block)
+    if len(matches) > 1 or len(matches) < 1:
+        print("Issue with Heading Syntax")
+    return f"h{matches[0].count('#')}",block[len(matches[0]):]
 
+def get_quote_info(block: str) -> Tuple[str,str]:
+    tag = "blockquote"
+    lines = block.split("\n")
+    new_lines = []
+    for line in lines:
+        new_lines.append(line[1:])
+    value = "\n".join(new_lines)
+    return tag, value
+        
+    

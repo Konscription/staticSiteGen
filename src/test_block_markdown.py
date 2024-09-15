@@ -159,3 +159,40 @@ last line"""
         result= block_to_block_type(block)
         expected = block_type_paragraph
         self.assertEqual(result,expected)
+        
+        
+    def test_get_heading_info(self):
+        block1 = "# heading"
+        block2 = "## heading"
+        block3 = "### heading"
+        block4 = "#### heading"
+        block5 = "##### heading"
+        block6 = "###### heading"
+        result1 = get_heading_info(block1)
+        result2 = get_heading_info(block2)
+        result3 = get_heading_info(block3)
+        result4 = get_heading_info(block4)
+        result5 = get_heading_info(block5)
+        result6 = get_heading_info(block6)
+        expected1 = "h1","heading"
+        expected2 = "h2","heading"
+        expected3 = "h3","heading"
+        expected4 = "h4","heading"
+        expected5 = "h5","heading"
+        expected6 = "h6","heading"
+        self.assertEqual(result1,expected1)
+        self.assertEqual(result2,expected2)
+        self.assertEqual(result3,expected3)
+        self.assertEqual(result4,expected4)
+        self.assertEqual(result5,expected5)
+        self.assertEqual(result6,expected6)
+
+    def test_get_quote_info(self):
+        block = """>quote
+>quote2
+>quote3"""
+        result = get_quote_info(block)
+        expected = "blockquote","""quote
+quote2
+quote3"""
+        self.assertEqual(result,expected)    
