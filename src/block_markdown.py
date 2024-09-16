@@ -135,22 +135,27 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
         block_type = block_to_block_type(block)
         
         
+        
 def block_to_htmlnode(block: str, block_type: str) -> HTMLNode:
     if block_type == block_type_paragraph:
-        return HTMLNode("p",block)
+        return HTMLNode("p",None,text_to_children(block))
     if block_type == block_type_heading:
         tag, value = get_heading_info(block)
-        return HTMLNode(tag,value)
+        return HTMLNode(tag,None,text_to_children(value))
     if block_type == block_type_quote:
         tag, value = get_quote_info(block)
-        return HTMLNode(tag,value)
+        return HTMLNode(tag,None,text_to_children(value))
     if block_type == block_type_code:
-        pass
+        tag, value = get_code_info(block)
+        return HTMLNode("pre",None,[HTMLNode(tag,value)])
     if block_type == block_type_ulist:
-        pass
+        tag, value = get_ulist_info(block)
     if block_type == block_type_olist:
         pass
-    
+   
+def text_to_children(text: str) -> List[HTMLNode]:
+    pass   
+ 
 def get_heading_info(block: str) -> Tuple[str,str]:
     regex_pattern = r"^#{1,6} "
     matches = re.findall(regex_pattern,block)
@@ -166,5 +171,13 @@ def get_quote_info(block: str) -> Tuple[str,str]:
         new_lines.append(line[1:])
     value = "\n".join(new_lines)
     return tag, value
-        
     
+def get_code_info(block: str) -> Tuple[str,str]:
+    tag = "code"
+    return tag, block[3:-3]
+
+def get_ulist_info(block: str) -> Tuple[str,str]:
+    pass
+
+def get_olist_info(block: str) -> Tuple[str,str]:
+    pass
