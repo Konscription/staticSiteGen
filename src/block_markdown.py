@@ -1,6 +1,8 @@
 import re
 from typing import List,Tuple
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
+from inline_markdown import text_to_textnodes
+from textnode import text_node_to_html_node
 
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
@@ -118,7 +120,6 @@ def is_unordered_list(block: str) -> bool:
             return False
     return True
 
-def markdown_to_html_node(markdown: str) -> HTMLNode:
     #split markdown into blocks
     #loop over each block
     #   determine the type of block
@@ -129,33 +130,41 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
     #           represent the inline markdown using previously created functions
     #make all the block nodes Children under a single parent HTML node (which should 
     #   just be a div) and return it.
-    blocks = markdown_to_blocks(markdown)
     
+def markdown_to_html_node(markdown: str) -> HTMLNode:
+    blocks = markdown_to_blocks(markdown)
+    children = []
     for block in blocks:
         block_type = block_to_block_type(block)
+        children.append(block_to_htmlnode(block,block_type))
+    return ParentNode("div", children)
         
-        
-        
+
 def block_to_htmlnode(block: str, block_type: str) -> HTMLNode:
-    if block_type == block_type_paragraph:
-        return HTMLNode("p",None,text_to_children(block))
-    if block_type == block_type_heading:
-        tag, value = get_heading_info(block)
-        return HTMLNode(tag,None,text_to_children(value))
-    if block_type == block_type_quote:
-        tag, value = get_quote_info(block)
-        return HTMLNode(tag,None,text_to_children(value))
-    if block_type == block_type_code:
-        tag, value = get_code_info(block)
-        return HTMLNode("pre",None,[HTMLNode(tag,value)])
-    if block_type == block_type_ulist:
-        tag, value = get_ulist_info(block)
-    if block_type == block_type_olist:
-        pass
+    return_node = None
+    match block_type:         
+        case "heading":
+            tag, value = get_heading_info(block)
+            return_node = ParentNode(tag,text_to_children(value))
+        case "quote":
+            tag, value = get_quote_info(block)
+            return_node = ParentNode(tag,text_to_children(value))
+        case "code":
+            tag, value = get_code_info(block)
+            return_node = ParentNode("pre",[LeafNode(tag,value)])
+        case "unordered_list":
+            tag, children = get_ulist_info(block)
+            return_node = ParentNode(tag,children)
+        case "ordered_list":
+            tag, children = get_olist_info(block)
+            return_node = ParentNode(tag,children)
+        case _:
+            return_node = ParentNode("p",text_to_children(block))
+    return return_node
    
 def text_to_children(text: str) -> List[HTMLNode]:
-    pass   
- 
+    return [text_node_to_html_node(node) for node in text_to_textnodes(text)]
+
 def get_heading_info(block: str) -> Tuple[str,str]:
     regex_pattern = r"^#{1,6} "
     matches = re.findall(regex_pattern,block)
@@ -174,10 +183,23 @@ def get_quote_info(block: str) -> Tuple[str,str]:
     
 def get_code_info(block: str) -> Tuple[str,str]:
     tag = "code"
-    return tag, block[3:-3]
+    return tag, block.lstrip().rstrip()[3:-3]
 
-def get_ulist_info(block: str) -> Tuple[str,str]:
-    pass
+def get_ulist_info(block: str) -> Tuple[str,List[ParentNode]]:
+    tag = "ul"
+    list_nodes = []
+    lines = block.split('\n')
+    for line in lines:
+        list_nodes.append(ParentNode("li",text_to_children(line.lstrip()[2:])))
+    return tag, list_nodes
 
-def get_olist_info(block: str) -> Tuple[str,str]:
-    pass
+def get_olist_info(block: str) -> Tuple[str,List[ParentNode]]:
+    tag = "ol"
+    list_nodes = []
+    order_start = 1
+    lines = block.split('\n')
+    for line in lines:
+        order = f"{order_start}. "
+        list_nodes.append(ParentNode("li",text_to_children(line.lstrip()[len(order)])))
+        order_start += 1
+    return tag, list_nodes
