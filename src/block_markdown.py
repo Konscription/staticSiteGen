@@ -200,6 +200,6 @@ def get_olist_info(block: str) -> Tuple[str,List[ParentNode]]:
     lines = block.split('\n')
     for line in lines:
         order = f"{order_start}. "
-        list_nodes.append(ParentNode("li",text_to_children(line.lstrip()[len(order)])))
+        list_nodes.append(ParentNode("li",text_to_children(line.lstrip()[len(order):])))
         order_start += 1
     return tag, list_nodes
