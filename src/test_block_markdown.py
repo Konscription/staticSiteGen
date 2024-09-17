@@ -340,12 +340,9 @@ Another line of paragraph text.""")])
         Look, front-end development is for script kiddies and soydevs who can't handle the real programming. I mean,
         it's just a bunch of divs and spans, right? And css??? It's like, "Oh, I want this to be red, but not thaaaaat
         red." What a joke.
- 
-        
+
         Real programmers code, not silly markup languages. They code on Arch Linux, not Mac OS, and certainly not
-        Windows. They use Vim, not VS Code. They use C, not HTML. Come to the ![backend]("https://www.boot.dev"), where the real programming
-        happens.                
-"""
+        Windows. They use Vim, not VS Code. They use C, not HTML. Come to the ![backend](https://www.boot.dev), where the real programming happens."""
         result = markdown_to_html_node(markdown)
         print(result)
         expected = ParentNode("div",[
@@ -355,9 +352,7 @@ Another line of paragraph text.""")])
         red." What a joke.""")]),
             ParentNode("p",[LeafNode(None,"""Real programmers code, not silly markup languages. They code on Arch Linux, not Mac OS, and certainly not
         Windows. They use Vim, not VS Code. They use C, not HTML. Come to the """),
-                            LeafNode("img",None,{"https://www.boot.dev","backend"}),
-                            LeafNode(None,""", where the real programming
-        happens.                """)])
-        ])
+                            LeafNode("img",'',{'src': "https://www.boot.dev", 'alt': "backend"}),
+                            LeafNode(None,""", where the real programming happens.""", None)], None)], None)
         self.assertEqual(result,expected)   
     

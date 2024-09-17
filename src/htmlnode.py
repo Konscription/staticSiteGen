@@ -56,13 +56,25 @@ class HTMLNode:
             bool: true if objects values are the same, false otherwise
         """        
         if not isinstance(other, HTMLNode):
-            return False
+            return False                
         return (
             self.tag == other.tag 
             and self.value == other.value
-            and self.children == other.children
+            and self.children_eq(self.children, other.children)
             and self.props == other.props
         )
+        
+    def children_eq(self, children: List['HTMLNode'], other_children: List['HTMLNode']) -> bool:
+        if children != [] and children != None and other_children != [] and other_children != None:
+            for child in children:
+                for other_child in other_children:
+                    if child.tag != other_child.tag:
+                        return False
+                    if child.value != other_child.value:
+                        return False
+                    if not self.children_eq(child.children, other_child.children):
+                        return False
+        return True
 
 class LeafNode(HTMLNode):
     """a type of HTMLNode that represents a single HTML tag with no children. 
