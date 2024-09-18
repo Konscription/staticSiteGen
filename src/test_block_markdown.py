@@ -344,7 +344,6 @@ Another line of paragraph text.""")])
         Real programmers code, not silly markup languages. They code on Arch Linux, not Mac OS, and certainly not
         Windows. They use Vim, not VS Code. They use C, not HTML. Come to the ![backend](https://www.boot.dev), where the real programming happens."""
         result = markdown_to_html_node(markdown)
-        print(result)
         expected = ParentNode("div",[
             ParentNode("h1",[LeafNode(None,"front-end development is the worst")]),
             ParentNode("p",[LeafNode(None,"""Look, front-end development is for script kiddies and soydevs who can't handle the real programming. I mean,
