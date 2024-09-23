@@ -12,10 +12,13 @@ def copy_dir(source_dir: str, destination_dir: str):
     """    
     if(os.path.exists(destination_dir)):
         shutil.rmtree(destination_dir)
+    os.makedirs(destination_dir)
     
     for item in os.listdir(source_dir):
         source_path = os.path.join(source_dir, item)
+        print(source_path)
         destination_path = os.path.join(destination_dir, item)
+        print(destination_path)
         
         if os.path.isfile(source_path):
             shutil.copy(source_path, destination_path)
