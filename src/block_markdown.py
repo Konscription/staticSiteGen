@@ -177,7 +177,7 @@ def get_quote_info(block: str) -> Tuple[str,str]:
     lines = block.split("\n")
     new_lines = []
     for line in lines:
-        new_lines.append(line[1:])
+        new_lines.append(line[1:].strip())
     value = "\n".join(new_lines)
     return tag, value
     
