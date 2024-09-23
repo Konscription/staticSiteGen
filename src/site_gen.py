@@ -22,7 +22,14 @@ def extract_title(markdown: str) -> str:
     raise ValueError("Error: No title header found.")
 
 def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
-    
+    """Generate an HTML page from markdown using a template html and a markdown file. 
+    write the resulting file to destination.
+
+    Args:
+        from_path (str): source path to markdown file
+        template_path (str): path to template html file
+        dest_path (str): path to destination html file
+    """    
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
     markdown = read_file(from_path)
