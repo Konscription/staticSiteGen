@@ -4,13 +4,11 @@ from file_system_utilities import copy_static_dir
 def main():
     source = r"./static/"
     destination = r"./public/"
-    markdown_path = r"./content/index.md"
+    markdown_path = r"./content/"
     template_path = r"./template.html"
-    gen_dest_path = r"./public/index.html"
+    gen_dest_path = r"./public/"
     
-    copy_static_dir(source, destination) #deletes destination, then recreates and copys from source
-    
-    #generate_page(markdown_path, template_path, gen_dest_path)
-    generate_pages_recursive("./content/",template_path,"./public/")
+    copy_static_dir(source, destination) 
+    generate_pages_recursive(markdown_path,template_path,gen_dest_path)
 
 main()
