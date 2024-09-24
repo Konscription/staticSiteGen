@@ -46,6 +46,14 @@ def read_file(path: str) -> str:
     return content
         
 def write_file(content: str, dest_path: str) -> None:
+    """write given content to a file, at the given path.
+    overwrite file content if the file exists.
+    if the path and file does not exist create it.
+
+    Args:
+        content (str): a string of content to be writen to a file.
+        dest_path (str): destination path with filename.
+    """    
     path = os.path.dirname(dest_path)
     
     if os.path.exists(dest_path):

@@ -45,17 +45,25 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
     write_file(new_html, dest_path)
     
 def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str) -> None:
-        
-        content_dirs = os.listdir(dir_path_content)
-        for entry in content_dirs:
-            full_path = os.path.join(dir_path_content,entry)
-            if os.path.isfile(full_path):
-                dest_path = os.path.join(dest_dir_path,entry.replace(".md",".html"))
-                if entry.endswith(".md"):
-                    generate_page(full_path,template_path, dest_path)
-                
-            elif os.path.isdir(full_path):
-                new_dest_dir_path = os.path.join(dest_dir_path,entry)                
-                generate_pages_recursive(full_path, template_path, new_dest_dir_path)
+    """dynamicly recurse through a given directory converting any markdown files to 
+    html in the given destination. maintains folder structure in destination.
+    uses a template html at the given path in the conversion process.
+
+    Args:
+        dir_path_content (str): directory with markdown content to be converted to html
+        template_path (str): path to the template html file
+        dest_dir_path (str): directory where the html files will be served from.
+    """        
+    content_dirs = os.listdir(dir_path_content)
+    for entry in content_dirs:
+        full_path = os.path.join(dir_path_content,entry)
+        if os.path.isfile(full_path):
+            dest_path = os.path.join(dest_dir_path,entry.replace(".md",".html"))
+            if entry.endswith(".md"):
+                generate_page(full_path,template_path, dest_path)
+            
+        elif os.path.isdir(full_path):
+            new_dest_dir_path = os.path.join(dest_dir_path,entry)                
+            generate_pages_recursive(full_path, template_path, new_dest_dir_path)
 
         
