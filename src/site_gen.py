@@ -1,3 +1,5 @@
+import os
+import shutil
 from file_system_utilities import read_file, write_file
 from block_markdown import markdown_to_html_node
 
@@ -42,6 +44,18 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
     
     write_file(new_html, dest_path)
     
-    
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str) -> None:
+        
+        content_dirs = os.listdir(dir_path_content)
+        for entry in content_dirs:
+            full_path = os.path.join(dir_path_content,entry)
+            if os.path.isfile(full_path):
+                dest_path = os.path.join(dest_dir_path,entry.replace(".md",".html"))
+                if entry.endswith(".md"):
+                    generate_page(full_path,template_path, dest_path)
+                
+            elif os.path.isdir(full_path):
+                new_dest_dir_path = os.path.join(dest_dir_path,entry)                
+                generate_pages_recursive(full_path, template_path, new_dest_dir_path)
 
         
